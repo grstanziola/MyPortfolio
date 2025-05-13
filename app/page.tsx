@@ -4,7 +4,7 @@ import { socialLinks } from "./config";
 export default function Page() {
   return (
     <section>
-      <a href={socialLinks.twitter} target="_blank">
+      <a href={socialLinks.linkedin} target="_blank">
         <Image
           src="/profile.png"
           alt="Profile photo"
@@ -15,50 +15,46 @@ export default function Page() {
           priority
         />
       </a>
-      <h1 className="mb-8 text-2xl font-medium">
-        Portfolio template!
+      <h1 className="mb-4 text-2xl font-medium">
+      Data Alchemist & Creative Developer
       </h1>
       <div className="prose prose-neutral dark:prose-invert">
         <p>
-          A clean, fast, and lightweight portfolio template built with Next.js,
-          Vercel, and Tailwind CSS.
+          I transform complex data into digital gold through code, visualization, and a touch of creative magic.
         </p>
         <p>
-          Nextfolio has everything you need for a portfolio: MDX blog, SEO, RSS,
-          Atom & JSON feeds, analytics, Tweet & YouTube embeds, KaTeX and {""}
-          <a
-            target="_blank"
-            href="https://github.com/1msirius/Nextfolio?tab=readme-ov-file#features"
-          >
-            more
-          </a>
-          .
+          <h3 className="mb-3 text-xl font-medium">What I Do:</h3>
+          <ul className="list-disc pl-2 mb-2">
+            <li>Craft pixel-perfect front-end experiences with React, Next.js & Tailwind CSS</li>
+            <li>Extract actionable insights from complex datasets using Python, SQL & Power BI</li>
+            <li>Build scalable, cloud-native solutions leveraging AWS technologies</li>
+            <li>Turn business requirements into elegant, user-centered digital solutions</li>
+          </ul>
         </p>
         <p>
-          Nextfolio is{" "}
-          <a href={socialLinks.github} target="_blank">
-            open-source
-          </a>{" "}
-          and fully customizable, making it easy to add more features.
+          <h3 className="mb-3 text-xl font-medium">My Superpower:</h3>
+          <p>
+          Translating between technical and non-technical worlds. I speak both fluent code and human.
+          </p>
         </p>
         <p>
-          <a
-            href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2F1msirius%2FNextfolio"
-            target="_blank"
-          >
-            Deploy
-          </a>{" "}
-          your Nextfolio site with Vercel in minutes and follow the set up
-          instructions in the{" "}
-          <a href="/blog/getting-started">Getting Started</a> post.
+          <h4 className="mb-3 text-xl font-medium">By The Numbers:</h4>
+          <ul className="list-disc pl-2 mb-2">
+            <li>1.5+ years professional experience</li>
+            <li>Computer Science & Management graduate</li>
+            <li>3 programming languages mastered</li>
+            <li>24/7 problem-solving mindset</li>
+          </ul>
         </p>
         <p>
-          Built and maintained by{" "}
-          <a href="https://imsirius.xyz/" target="_blank">
-            Sirius
-          </a>
-          .
+        Panama-based <span>🇵🇦</span> , globally-minded. Available for remote collaboration and on-site projects.
         </p>
+        <p className=" text-sm font-light">
+            <a href="/projects">View My Portfolio</a> | 
+            <a href="/resume.pdf" target="_blank">Download Resume</a> | 
+            <a href="/contact">Let's Connect</a>
+        </p>
+        <p><i>Currently accepting new freelance projects and full-time opportunities</i></p>
       </div>
     </section>
   );
