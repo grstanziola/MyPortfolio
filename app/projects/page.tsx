@@ -1,34 +1,74 @@
-import Link from "next/link";
-import type { Metadata } from "next";
-import { projects } from "./project-data";
+// app/projects/page.tsx
+import { Metadata } from "next";
+import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
+import { Pool } from 'pg';
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Nextfolio Projects",
+  description: "My Portfolio Projects",
 };
 
-export default function Projects() {
+// This ensures the page is dynamically rendered with fresh data
+export const dynamic = 'force-dynamic';
+
+async function getProjects() {
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  });
+
+  try {
+    const result = await pool.query('SELECT * FROM projects ORDER BY year DESC');
+    return result.rows;
+  } catch (error) {
+    console.error('Database error:', error);
+    return [];
+  }
+}
+
+export default async function Projects() {
+  const projects = await getProjects();
+  
+  // Transform projects data to match the StickyScroll content format
+  const content = projects.map(project => {
+    let gradientClass = "bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))]";
+    
+    if (project.background_color === 'pink-indigo') {
+      gradientClass = "bg-[linear-gradient(to_bottom_right,var(--pink-500),var(--indigo-500))]";
+    } else if (project.background_color === 'orange-yellow') {
+      gradientClass = "bg-[linear-gradient(to_bottom_right,var(--orange-500),var(--yellow-500))]";
+    }
+    
+    return {
+      title: project.title,
+      description: project.description,
+      content: project.content_type === 'image' ? (
+        <div className="flex h-full w-full items-center justify-center text-white">
+          <img
+            src={project.image_url}
+            className="h-full w-full object-cover"
+            alt={project.title}
+          />
+        </div>
+      ) : (
+        <div className={`flex h-full w-full items-center justify-center ${gradientClass} text-white`}>
+          <div className="text-lg font-semibold">{project.title}</div>
+        </div>
+      ),
+    };
+  });
+
   return (
-    <section>
-      <h1 className="mb-8 text-2xl font-medium">Projects</h1>
-      <div>
-        {projects.map((project, index) => (
-          <Link
-            key={index}
-            href={project.url}
-            className="flex flex-col space-y-1 mb-5 transition-opacity duration-200 hover:opacity-80"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
-              <h2 className="text-black dark:text-white">{project.title}</h2>
-              <p className="text-neutral-600 dark:text-neutral-400">
-                {project.description}
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
+    <section className="w-full">
+      <h1 className="mb-8 text-2xl font-medium px-4">Projects</h1>
+      
+      {content.length > 0 ? (
+        <div className="w-full">
+          <StickyScroll content={content} />
+        </div>
+      ) : (
+        <p className="text-center py-10">No projects found</p>
+      )}
     </section>
   );
 }
