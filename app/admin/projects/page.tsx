@@ -1,19 +1,53 @@
 // app/admin/projects/page.tsx
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
+interface Project {
+  id: number;
+  title: string;
+  year: number;
+  description: string;
+  url: string;
+  content_type: 'gradient' | 'image';
+  background_color: string;
+  image_url: string;
+}
+
+type ContentType = 'gradient' | 'image';
 
 export default function AdminProjects() {
   const router = useRouter();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     year: new Date().getFullYear(),
     description: '',
     url: '',
-    content_type: 'gradient',
+    content_type: 'gradient' as ContentType,
     background_color: 'cyan-emerald',
     image_url: ''
   });
+
+  // Fetch existing projects
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const response = await fetch('/api/projects');
+        if (response.ok) {
+          const data = await response.json();
+          setProjects(data);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchProjects();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -23,6 +57,8 @@ export default function AdminProjects() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("Submitting form data:", formData);
+    
     try {
       const response = await fetch('/api/projects', {
         method: 'POST',
@@ -30,30 +66,38 @@ export default function AdminProjects() {
         body: JSON.stringify(formData)
       });
       
-      if (response.ok) {
-        alert('Project added successfully!');
-        router.refresh();
-        // Reset form
-        setFormData({
-          title: '',
-          year: new Date().getFullYear(),
-          description: '',
-          url: '',
-          content_type: 'gradient',
-          background_color: 'cyan-emerald',
-          image_url: ''
-        });
-      } else {
-        alert('Failed to add project');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API error response:", errorData);
+        alert(`Failed to add project: ${errorData.details || errorData.error || 'Unknown error'}`);
+        return;
       }
+      
+      const newProject = await response.json();
+      console.log("Successfully created project:", newProject);
+      
+      // Update projects list
+      setProjects(prevProjects => [...prevProjects, newProject]);
+      
+      alert('Project added successfully!');
+      // Reset form
+      setFormData({
+        title: '',
+        year: new Date().getFullYear(),
+        description: '',
+        url: '',
+        content_type: 'gradient',
+        background_color: 'cyan-emerald',
+        image_url: ''
+      });
     } catch (error) {
       console.error('Error adding project:', error);
-      alert('Error adding project');
+      alert(`Error adding project: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
+    <div className="max-w-4xl mx-auto py-8 px-4">
       <h1 className="text-2xl font-bold mb-6">Add New Project</h1>
       
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -117,7 +161,7 @@ export default function AdminProjects() {
           </select>
         </div>
         
-        {formData.content_type === 'gradient' && (
+        {formData.content_type === ('gradient' as ContentType) && (
           <div>
             <label className="block mb-1">Background Style</label>
             <select
@@ -133,7 +177,7 @@ export default function AdminProjects() {
           </div>
         )}
         
-        {formData.content_type === 'image' && (
+        {formData.content_type === ('image' as ContentType) && (
           <div>
             <label className="block mb-1">Image URL</label>
             <input
