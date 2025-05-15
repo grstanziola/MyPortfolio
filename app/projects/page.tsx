@@ -1,74 +1,130 @@
 // app/projects/page.tsx
 import { Metadata } from "next";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
-import { Pool } from 'pg';
 
 export const metadata: Metadata = {
   title: "Projects",
   description: "My Portfolio Projects",
 };
 
-// This ensures the page is dynamically rendered with fresh data
-export const dynamic = 'force-dynamic';
-
-async function getProjects() {
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-  });
-
-  try {
-    const result = await pool.query('SELECT * FROM projects ORDER BY year DESC');
-    return result.rows;
-  } catch (error) {
-    console.error('Database error:', error);
-    return [];
-  }
-}
-
-export default async function Projects() {
-  const projects = await getProjects();
+export default function Projects() {
+  // Sample projects data (will be replaced with database fetch)
+  const projects = [
+    {
+      id: 1,
+      title: "Support your users with popular topics",
+      description: "Statistics show that people browsing your webpage who receive live assistance with a chat widget are more likely to make a purchase.",
+      year: 2023,
+      image: "/photos/photo1.jpg", // This will be replaced with actual image paths
+      techStack: ["Next.js", "React", "Tailwind CSS"],
+      projectUrl: "https://example.com/portfolio",
+      // For the first project, we'll use a widget example similar to the one in your reference image
+      customContent: true
+    },
+    {
+      id: 2,
+      title: "Increase conversion with personalization",
+      description: "Customers are 40% more likely to spend more than planned when they identify the shopping experience as highly personalized to their needs.",
+      year: 2022,
+      image: "/photos/photo2.jpg",
+      techStack: ["TypeScript", "Express.js", "MongoDB"],
+      projectUrl: "https://example.com/ecommerce",
+      customContent: false
+    },
+    {
+      id: 3,
+      title: "Streamline your workflow with automation",
+      description: "Teams that implement automated workflows see a 27% increase in productivity and report higher job satisfaction across team members.",
+      year: 2021,
+      image: "/photos/photo3.jpg",
+      techStack: ["React", "Node.js", "PostgreSQL"],
+      projectUrl: "https://example.com/taskapp",
+      customContent: false
+    },
+    {
+      id: 4,
+      title: "Design systems that scale",
+      description: "Companies with established design systems report 50% faster product development cycles and improved consistency across all products.",
+      year: 2023,
+      image: "/photos/photo4.jpg",
+      techStack: ["Figma", "Storybook", "React"],
+      projectUrl: "https://example.com/design",
+      customContent: false
+    }
+  ];
   
   // Transform projects data to match the StickyScroll content format
   const content = projects.map(project => {
-    let gradientClass = "bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))]";
-    
-    if (project.background_color === 'pink-indigo') {
-      gradientClass = "bg-[linear-gradient(to_bottom_right,var(--pink-500),var(--indigo-500))]";
-    } else if (project.background_color === 'orange-yellow') {
-      gradientClass = "bg-[linear-gradient(to_bottom_right,var(--orange-500),var(--yellow-500))]";
-    }
+    // Create the content based on whether it's a custom component or regular image
+    const projectContent = project.customContent ? (
+      // Custom widget content for the first project (similar to your reference image)
+      <div className="relative h-full w-full overflow-hidden rounded-lg bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-blue-900/30 dark:to-indigo-900/30">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-full max-w-xs p-5">
+            <div className="mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                  <svg className="h-full w-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">Mary Coyle</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Online</div>
+                </div>
+                <div className="ml-auto">
+                  <button className="h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                    <svg className="h-3 w-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex items-center space-x-2 mb-2">
+                  <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="text-xs text-gray-600 dark:text-gray-300">Williamsburg, VA</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <svg className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-xs text-blue-500 dark:text-blue-400">acme.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : (
+      // Standard image content for other projects
+      <div className="relative h-full w-full overflow-hidden rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+        <img
+          src={project.image}
+          alt={project.title}
+          className="object-cover w-full h-full"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+      </div>
+    );
     
     return {
+      id: project.id,
       title: project.title,
       description: project.description,
-      content: project.content_type === 'image' ? (
-        <div className="flex h-full w-full items-center justify-center text-white">
-          <img
-            src={project.image_url}
-            className="h-full w-full object-cover"
-            alt={project.title}
-          />
-        </div>
-      ) : (
-        <div className={`flex h-full w-full items-center justify-center ${gradientClass} text-white`}>
-          <div className="text-lg font-semibold">{project.title}</div>
-        </div>
-      ),
+      year: project.year,
+      techStack: project.techStack,
+      projectUrl: project.projectUrl,
+      content: projectContent
     };
   });
 
   return (
-    <section className="w-full">
-      <h1 className="mb-8 text-2xl font-medium px-4">Projects</h1>
-      
-      {content.length > 0 ? (
-        <div className="w-full">
-          <StickyScroll content={content} />
-        </div>
-      ) : (
-        <p className="text-center py-10">No projects found</p>
-      )}
+    <section className="w-full overflow-hidden">
+      <StickyScroll content={content} />
     </section>
   );
 }
