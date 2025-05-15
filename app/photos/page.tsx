@@ -81,10 +81,9 @@ export default function Photos() {
 
   return (
     <section className="w-full">
-      <div className="max-w-[624px] mx-auto px-4 mb-8">
+      {/* Header and filters in a centered, narrower container */}
+      <div className="max-w-2xl mx-auto px-4 mb-8">
         <h1 className="text-2xl font-medium mb-4">Gallery</h1>
-        
-        {/* Category filters */}
         <div className="flex flex-wrap gap-2 mb-6">
           {categories.map((category) => (
             <button
@@ -92,7 +91,6 @@ export default function Photos() {
               onClick={() => {
                 setIsLoading(true);
                 setSelectedCategory(category);
-                // Simulate loading state
                 setTimeout(() => setIsLoading(false), 300);
               }}
               className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors
@@ -106,25 +104,22 @@ export default function Photos() {
           ))}
         </div>
       </div>
-      
-      {/* Full width grid container */}
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="min-h-[80vh]">
-            {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                {[...Array(4)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className={`relative h-[300px] sm:h-[400px] rounded-lg bg-neutral-200 dark:bg-neutral-800 animate-pulse
-                      ${i === 0 || i === 3 ? 'md:col-span-2' : 'col-span-1'}`}
-                  />
-                ))}
-              </div>
-            ) : (
-              <LayoutGrid cards={filteredCards} />
-            )}
-          </div>
+      {/* Full-width grid container */}
+      <div className="w-full px-0 sm:px-2">
+        <div className="min-h-[80vh]">
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`relative h-[300px] sm:h-[400px] rounded-lg bg-neutral-200 dark:bg-neutral-800 animate-pulse
+                    ${i === 0 || i === 3 ? 'md:col-span-2' : 'col-span-1'}`}
+                />
+              ))}
+            </div>
+          ) : (
+            <LayoutGrid cards={filteredCards} />
+          )}
         </div>
       </div>
     </section>
