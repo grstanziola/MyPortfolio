@@ -1,303 +1,131 @@
 "use client";
+import React, { useState } from "react";
+import { LayoutGrid } from "@/components/ui/layout-grid";
+import { motion } from "framer-motion";
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
-import { FaPlay, FaImage, FaVideo } from "react-icons/fa";
-import { YouTubeComponent } from "../components/youtube";
+// Categories for filtering
+const categories = ["All", "Nature", "Architecture", "Travel"] as const;
+type Category = typeof categories[number];
 
-// Define the media types
-type MediaType = "image" | "video";
+// Card content components with improved styling
+const CardContent = ({ title, description, category }: { title: string; description: string; category: Category }) => (
+  <div className="space-y-1.5">
+    <h3 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white line-clamp-2 tracking-tight">
+      {title}
+    </h3>
+    <p className="font-normal text-xs sm:text-sm md:text-base text-neutral-200/90 line-clamp-2 leading-relaxed">
+      {description}
+    </p>
+    <span className="inline-block px-2 py-0.5 text-[10px] sm:text-xs font-medium bg-black/60 text-white/90 rounded-full backdrop-blur-sm">
+      {category}
+    </span>
+  </div>
+);
 
-// Common interface for all media items
-interface MediaItem {
-  id: string;
-  type: MediaType;
-  alt: string;
-  href?: string;
-  category?: string;
-  featured?: boolean;
-}
+// Sample data with categories
+const cards = [
+  {
+    id: 1,
+    content: <CardContent 
+      title="House in the woods" 
+      description="A serene and tranquil retreat, this house in the woods offers a peaceful escape from the hustle and bustle of city life."
+      category="Nature"
+    />,
+    className: "md:col-span-2",
+    thumbnail: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=3474&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Nature" as Category,
+  },
+  {
+    id: 2,
+    content: <CardContent 
+      title="House above the clouds" 
+      description="Perched high above the world, this house offers breathtaking views and a unique living experience."
+      category="Architecture"
+    />,
+    className: "col-span-1",
+    thumbnail: "https://images.unsplash.com/photo-1464457312035-3d7d0e0c058e?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Architecture" as Category,
+  },
+  {
+    id: 3,
+    content: <CardContent 
+      title="Greens all over" 
+      description="A house surrounded by greenery and nature's beauty. It's the perfect place to relax and unwind."
+      category="Nature"
+    />,
+    className: "col-span-1",
+    thumbnail: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Nature" as Category,
+  },
+  {
+    id: 4,
+    content: <CardContent 
+      title="Rivers are serene" 
+      description="A house by the river is a place of peace and tranquility. It's the perfect place to enjoy life."
+      category="Travel"
+    />,
+    className: "md:col-span-2",
+    thumbnail: "https://images.unsplash.com/photo-1475070929565-c985b496cb9f?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    category: "Travel" as Category,
+  },
+];
 
-// Interface for image media
-interface ImageMedia extends MediaItem {
-  type: "image";
-  src: string;
-}
+export default function Photos() {
+  const [selectedCategory, setSelectedCategory] = useState<Category>("All");
+  const [isLoading, setIsLoading] = useState(false);
 
-// Interface for video media
-interface VideoMedia extends MediaItem {
-  type: "video";
-  videoId: string; // YouTube video ID
-  thumbnail?: string; // Optional custom thumbnail
-}
-
-// Union type for all media
-type Media = ImageMedia | VideoMedia;
-
-export default function MediaGallery() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedType, setSelectedType] = useState<string>("all");
-  const [media, setMedia] = useState<Media[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Sample media data - in the future, this would come from your database
-  const allMedia: Media[] = [
-    {
-      id: "1",
-      type: "image",
-      src: "/photos/photo1.jpg",
-      alt: "Roman columns",
-      href: "https://unsplash.com/photos/people-walking-near-building-during-daytime-dFLBDQQeffU",
-      category: "architecture",
-      featured: true,
-    },
-    {
-      id: "2",
-      type: "image",
-      src: "/photos/photo2.jpg",
-      alt: "Big Ben",
-      href: "https://unsplash.com/photos/big-ben-london-MdJq0zFUwrw",
-      category: "landmarks",
-      featured: true,
-    },
-    {
-      id: "3",
-      type: "video",
-      videoId: "wXhTHyIgQ_U", // Sample YouTube ID from your existing components
-      alt: "Aerial Tour of Paris",
-      category: "travel",
-      featured: true,
-    },
-    {
-      id: "4",
-      type: "image",
-      src: "/photos/photo3.jpg",
-      alt: "Sacré-Cœur Basilica",
-      href: "https://unsplash.com/photos/a-view-of-the-inside-of-a-building-through-a-circular-window-Tp-3hrx88J4",
-      category: "architecture",
-    },
-    {
-      id: "5",
-      type: "image",
-      src: "/photos/photo4.jpg",
-      alt: "Eiffel Tower",
-      href: "https://unsplash.com/photos/the-eiffel-tower-towering-over-the-city-of-paris-OgPuPvPsHLM",
-      category: "landmarks",
-    },
-    {
-      id: "6",
-      type: "video",
-      videoId: "hDU4oiyhI0g", // Another sample YouTube ID
-      alt: "London City Tour",
-      category: "travel",
-    },
-    {
-      id: "7",
-      type: "image",
-      src: "/photos/photo5.jpg",
-      alt: "Taj Mahal",
-      href: "https://unsplash.com/photos/taj-mahal-india-IPlPkWPJ2fo",
-      category: "landmarks",
-    },
-    {
-      id: "8",
-      type: "image",
-      src: "/photos/photo6.jpg",
-      alt: "Colosseum",
-      href: "https://unsplash.com/photos/brown-concrete-building-under-blue-sky-during-daytime-3cyBR1rIJmA",
-      category: "architecture",
-    },
-    // In a real app, you would fetch these from a database
-  ];
-
-  // Categories derived from media items - fixed to handle TypeScript Set iteration
-  const categorySet = new Set<string>();
-  allMedia.forEach(item => {
-    if (item.category) categorySet.add(item.category);
-  });
-  const categories = ["all", ...Array.from(categorySet)];
-  
-  // Media types for filtering
-  const mediaTypes = [
-    { id: "all", label: "All Media", icon: null },
-    { id: "image", label: "Photos", icon: <FaImage className="mr-2" /> },
-    { id: "video", label: "Videos", icon: <FaVideo className="mr-2" /> },
-  ];
-
-  useEffect(() => {
-    // Reset loaded state when filters change
-    setIsLoaded(false);
-    
-    // Filter media based on selected category and type
-    let filteredMedia = [...allMedia];
-    
-    // Apply category filter
-    if (selectedCategory !== "all") {
-      filteredMedia = filteredMedia.filter(item => item.category === selectedCategory);
-    }
-    
-    // Apply type filter
-    if (selectedType !== "all") {
-      filteredMedia = filteredMedia.filter(item => item.type === selectedType);
-    }
-    
-    setMedia(filteredMedia);
-    
-    // Add a small delay to ensure smooth animation
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 200);
-  }, [selectedCategory, selectedType]);
-
-  // Render different media types
-  const renderMediaItem = (item: Media, index: number) => {
-    if (item.type === "image") {
-      return renderImage(item, index);
-    } else if (item.type === "video") {
-      return renderVideo(item, index);
-    }
-    return null;
-  };
-
-  // Render an image item
-  const renderImage = (item: ImageMedia, index: number) => (
-    <div className="relative aspect-square w-full h-full overflow-hidden">
-      <Image
-        src={item.src}
-        alt={item.alt}
-        fill
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
-        priority={index < 6}
-      />
-      <div className="absolute inset-0 bg-black bg-opacity-0 transition-all duration-300 group-hover:bg-opacity-30" />
-      
-      <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full transition-transform duration-300 group-hover:translate-y-0 bg-gradient-to-t from-black/70 to-transparent">
-        <h3 className="font-medium">{item.alt}</h3>
-        <p className="text-sm text-gray-200">{item.category}</p>
-      </div>
-      
-      {item.href && (
-        <a 
-          href={item.href} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="absolute inset-0"
-          aria-label={`View ${item.alt}`}
-        >
-          <span className="sr-only">View on Unsplash</span>
-        </a>
-      )}
-    </div>
-  );
-
-  // Render a video item
-  const renderVideo = (item: VideoMedia, index: number) => (
-    <div className="relative w-full h-full">
-      <div className="aspect-video w-full overflow-hidden rounded-lg">
-        <YouTubeComponent videoId={item.videoId} />
-      </div>
-      <div className="p-3">
-        <h3 className="font-medium text-black dark:text-white">{item.alt}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300">{item.category}</p>
-      </div>
-    </div>
-  );
+  // Filter cards based on selected category
+  const filteredCards = selectedCategory === "All" 
+    ? cards 
+    : cards.filter(card => card.category === selectedCategory);
 
   return (
     <section className="w-full">
-      <h1 className="mb-6 text-2xl font-medium">Media Gallery</h1>
-      
-      {/* Filter controls */}
-      <div className="mb-8 space-y-4">
-        {/* Media type filter */}
-        <div className="flex flex-wrap gap-2">
-          {mediaTypes.map((type) => (
-            <button
-              key={type.id}
-              onClick={() => setSelectedType(type.id)}
-              className={cn(
-                "px-4 py-2 text-sm rounded-md transition-all flex items-center",
-                selectedType === type.id
-                  ? "bg-black text-white dark:bg-white dark:text-black"
-                  : "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-              )}
-            >
-              {type.icon}
-              {type.label}
-            </button>
-          ))}
-        </div>
+      <div className="max-w-[624px] mx-auto px-4 mb-8">
+        <h1 className="text-2xl font-medium mb-4">Gallery</h1>
         
-        {/* Category filter */}
-        <div className="flex flex-wrap gap-2">
+        {/* Category filters */}
+        <div className="flex flex-wrap gap-2 mb-6">
           {categories.map((category) => (
             <button
               key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={cn(
-                "px-4 py-2 text-sm rounded-md transition-all",
-                selectedCategory === category
-                  ? "bg-black text-white dark:bg-white dark:text-black"
-                  : "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-              )}
+              onClick={() => {
+                setIsLoading(true);
+                setSelectedCategory(category);
+                // Simulate loading state
+                setTimeout(() => setIsLoading(false), 300);
+              }}
+              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors
+                ${selectedCategory === category 
+                  ? 'bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black' 
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'
+                }`}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
+              {category}
             </button>
           ))}
         </div>
       </div>
-
-      {/* Layout grid - different layout for videos vs images */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-max">
-        {media.map((item, index) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.4, delay: index * 0.1 }}
-            className={cn(
-              "group relative overflow-hidden rounded-lg shadow-md bg-white dark:bg-gray-800",
-              item.featured && item.type === "image" && "md:col-span-2 md:row-span-2",
-              item.type === "video" && "md:col-span-2" // Videos take 2 columns
+      
+      {/* Full width grid container */}
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="min-h-[80vh]">
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`relative h-[300px] sm:h-[400px] rounded-lg bg-neutral-200 dark:bg-neutral-800 animate-pulse
+                      ${i === 0 || i === 3 ? 'md:col-span-2' : 'col-span-1'}`}
+                  />
+                ))}
+              </div>
+            ) : (
+              <LayoutGrid cards={filteredCards} />
             )}
-          >
-            {renderMediaItem(item, index)}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Show message when no results */}
-      {media.length === 0 && (
-        <div className="p-8 text-center bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <p className="text-gray-600 dark:text-gray-300">No media found matching your filters.</p>
-          <button 
-            onClick={() => {
-              setSelectedCategory("all");
-              setSelectedType("all");
-            }}
-            className="mt-4 px-4 py-2 bg-black text-white dark:bg-white dark:text-black rounded-md"
-          >
-            Reset Filters
-          </button>
+          </div>
         </div>
-      )}
-
-      {/* Admin info */}
-      <div className="mt-12 p-6 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
-        <h2 className="text-lg font-medium mb-2">Admin Information</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
-          This gallery supports both images and videos (YouTube embeds). In the future, you'll be able to:
-        </p>
-        <ul className="list-disc pl-5 text-gray-600 dark:text-gray-400 space-y-1">
-          <li>Upload images directly from the admin interface</li>
-          <li>Add YouTube videos by simply pasting the URL</li>
-          <li>Create and manage custom categories</li>
-          <li>Reorder media items with drag and drop</li>
-          <li>Track view counts and engagement</li>
-        </ul>
       </div>
     </section>
   );
