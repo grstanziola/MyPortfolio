@@ -1,127 +1,117 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { LayoutGrid } from "@/components/ui/layout-grid";
-import { motion } from "framer-motion";
 
-// Categories for filtering
-const categories = ["All", "Nature", "Architecture", "Travel"] as const;
-type Category = typeof categories[number];
-
-// Card content components with improved styling
-const CardContent = ({ title, description, category }: { title: string; description: string; category: Category }) => (
-  <div className="space-y-1.5">
-    <h3 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white line-clamp-2 tracking-tight">
-      {title}
-    </h3>
-    <p className="font-normal text-xs sm:text-sm md:text-base text-neutral-200/90 line-clamp-2 leading-relaxed">
-      {description}
-    </p>
-    <span className="inline-block px-2 py-0.5 text-[10px] sm:text-xs font-medium bg-black/60 text-white/90 rounded-full backdrop-blur-sm">
-      {category}
-    </span>
-  </div>
-);
-
-// Sample data with categories
-const cards = [
-  {
-    id: 1,
-    content: <CardContent 
-      title="House in the woods" 
-      description="A serene and tranquil retreat, this house in the woods offers a peaceful escape from the hustle and bustle of city life."
-      category="Nature"
-    />,
-    className: "md:col-span-2",
-    thumbnail: "https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=3474&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "Nature" as Category,
-  },
-  {
-    id: 2,
-    content: <CardContent 
-      title="House above the clouds" 
-      description="Perched high above the world, this house offers breathtaking views and a unique living experience."
-      category="Architecture"
-    />,
-    className: "col-span-1",
-    thumbnail: "https://images.unsplash.com/photo-1464457312035-3d7d0e0c058e?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "Architecture" as Category,
-  },
-  {
-    id: 3,
-    content: <CardContent 
-      title="Greens all over" 
-      description="A house surrounded by greenery and nature's beauty. It's the perfect place to relax and unwind."
-      category="Nature"
-    />,
-    className: "col-span-1",
-    thumbnail: "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "Nature" as Category,
-  },
-  {
-    id: 4,
-    content: <CardContent 
-      title="Rivers are serene" 
-      description="A house by the river is a place of peace and tranquility. It's the perfect place to enjoy life."
-      category="Travel"
-    />,
-    className: "md:col-span-2",
-    thumbnail: "https://images.unsplash.com/photo-1475070929565-c985b496cb9f?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    category: "Travel" as Category,
-  },
-];
-
-export default function Photos() {
-  const [selectedCategory, setSelectedCategory] = useState<Category>("All");
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Filter cards based on selected category
-  const filteredCards = selectedCategory === "All" 
-    ? cards 
-    : cards.filter(card => card.category === selectedCategory);
-
+export default function LayoutGridDemo() {
   return (
-    <section className="w-full">
-      {/* Header and filters in a centered, narrower container */}
-      <div className="max-w-2xl mx-auto px-4 mb-8">
-        <h1 className="text-2xl font-medium mb-4">Gallery</h1>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => {
-                setIsLoading(true);
-                setSelectedCategory(category);
-                setTimeout(() => setIsLoading(false), 300);
-              }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors
-                ${selectedCategory === category 
-                  ? 'bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black' 
-                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'
-                }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
+    <section>
+      <h1 className="text-2xl font-medium mb-4">Gallery</h1>
+      <div className="flex flex-wrap gap-2 mb-6">
+        <button className="bg-neutral-800 text-white px-3 py-1.5 text-sm font-medium rounded-full">
+          All
+        </button>
+        <button className="bg-neutral-100 text-neutral-600 hover:bg-neutral-200 px-3 py-1.5 text-sm font-medium rounded-full">
+          Nature
+        </button>
+        <button className="bg-neutral-100 text-neutral-600 hover:bg-neutral-200 px-3 py-1.5 text-sm font-medium rounded-full">
+          Architecture
+        </button>
+        <button className="bg-neutral-100 text-neutral-600 hover:bg-neutral-200 px-3 py-1.5 text-sm font-medium rounded-full">
+          Travel
+        </button>
       </div>
-      {/* Full-width grid container */}
-      <div className="w-full px-0 sm:px-2">
-        <div className="min-h-[80vh]">
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-              {[...Array(4)].map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`relative h-[300px] sm:h-[400px] rounded-lg bg-neutral-200 dark:bg-neutral-800 animate-pulse
-                    ${i === 0 || i === 3 ? 'md:col-span-2' : 'col-span-1'}`}
-                />
-              ))}
-            </div>
-          ) : (
-            <LayoutGrid cards={filteredCards} />
-          )}
-        </div>
+      
+      <div className="min-h-[80vh]">
+        <LayoutGrid cards={cards} />
       </div>
     </section>
   );
 }
+
+const SkeletonOne = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        House in the woods
+      </p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        A serene and tranquil retreat, this house in the woods offers a peaceful
+        escape from the hustle and bustle of city life.
+      </p>
+    </div>
+  );
+};
+
+const SkeletonTwo = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        House above the clouds
+      </p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        Perched high above the world, this house offers breathtaking views and a
+        unique living experience. It&apos;s a place where the sky meets home,
+        and tranquility is a way of life.
+      </p>
+    </div>
+  );
+};
+
+const SkeletonThree = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        Cottage with garden
+      </p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        A charming cottage surrounded by a beautiful garden. It&apos;s the perfect
+        place to relax, unwind, and enjoy the beauty of nature.
+      </p>
+    </div>
+  );
+};
+
+const SkeletonFour = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        Mountain scenery
+      </p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        Majestic mountains with a stunning forest view. The perfect backdrop for
+        adventure and exploration in the great outdoors.
+      </p>
+    </div>
+  );
+};
+
+const cards = [
+  {
+    id: 1,
+    content: <SkeletonOne />,
+    className: "md:col-span-2",
+    thumbnail:
+      "https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=3474&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 2,
+    content: <SkeletonTwo />,
+    className: "col-span-1",
+    thumbnail:
+      "https://images.unsplash.com/photo-1464457312035-3d7d0e0c058e?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 3,
+    content: <SkeletonThree />,
+    className: "col-span-1",
+    thumbnail:
+      "https://images.unsplash.com/photo-1588880331179-bc9b93a8cb5e?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 4,
+    content: <SkeletonFour />,
+    className: "md:col-span-2",
+    thumbnail:
+      "https://images.unsplash.com/photo-1475070929565-c985b496cb9f?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+];
