@@ -5,21 +5,7 @@ import { LayoutGrid } from "@/components/ui/layout-grid";
 export default function LayoutGridDemo() {
   return (
     <section>
-      <h1 className="text-2xl font-medium mb-4">Gallery</h1>
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button className="bg-neutral-800 text-white px-3 py-1.5 text-sm font-medium rounded-full">
-          All
-        </button>
-        <button className="bg-neutral-100 text-neutral-600 hover:bg-neutral-200 px-3 py-1.5 text-sm font-medium rounded-full">
-          Nature
-        </button>
-        <button className="bg-neutral-100 text-neutral-600 hover:bg-neutral-200 px-3 py-1.5 text-sm font-medium rounded-full">
-          Architecture
-        </button>
-        <button className="bg-neutral-100 text-neutral-600 hover:bg-neutral-200 px-3 py-1.5 text-sm font-medium rounded-full">
-          Travel
-        </button>
-      </div>
+      <h1 className="text-2xl font-medium mb-6">Gallery</h1>
       
       <div className="min-h-[80vh]">
         <LayoutGrid cards={cards} />

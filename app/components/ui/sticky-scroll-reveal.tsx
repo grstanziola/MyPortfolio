@@ -15,7 +15,6 @@ export const StickyScroll = ({
     title: string | React.ReactNode;
     description: string | React.ReactNode;
     year?: number;
-    techStack?: string[];
     projectUrl?: string;
     content?: React.ReactNode | any;
   }[];
@@ -102,20 +101,6 @@ export const StickyScroll = ({
                   <div className="text-sm md:text-base text-gray-600 dark:text-gray-300">
                     {item.description}
                   </div>
-                  
-                  {/* Tech stack labels */}
-                  {item.techStack && (
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {item.techStack.map((tech, idx) => (
-                        <span 
-                          key={idx} 
-                          className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md text-xs font-medium"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                   
                   {/* Project link button */}
                   {item.projectUrl && (

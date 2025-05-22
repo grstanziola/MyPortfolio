@@ -15,10 +15,8 @@ export default function Projects() {
       title: "Support your users with popular topics",
       description: "Statistics show that people browsing your webpage who receive live assistance with a chat widget are more likely to make a purchase.",
       year: 2023,
-      image: "/photos/photo1.jpg", // This will be replaced with actual image paths
-      techStack: ["Next.js", "React", "Tailwind CSS"],
+      image: "/photos/photo1.jpg",
       projectUrl: "https://example.com/portfolio",
-      // For the first project, we'll use a widget example similar to the one in your reference image
       customContent: true
     },
     {
@@ -27,7 +25,6 @@ export default function Projects() {
       description: "Customers are 40% more likely to spend more than planned when they identify the shopping experience as highly personalized to their needs.",
       year: 2022,
       image: "/photos/photo2.jpg",
-      techStack: ["TypeScript", "Express.js", "MongoDB"],
       projectUrl: "https://example.com/ecommerce",
       customContent: false
     },
@@ -37,7 +34,6 @@ export default function Projects() {
       description: "Teams that implement automated workflows see a 27% increase in productivity and report higher job satisfaction across team members.",
       year: 2021,
       image: "/photos/photo3.jpg",
-      techStack: ["React", "Node.js", "PostgreSQL"],
       projectUrl: "https://example.com/taskapp",
       customContent: false
     },
@@ -47,8 +43,25 @@ export default function Projects() {
       description: "Companies with established design systems report 50% faster product development cycles and improved consistency across all products.",
       year: 2023,
       image: "/photos/photo4.jpg",
-      techStack: ["Figma", "Storybook", "React"],
       projectUrl: "https://example.com/design",
+      customContent: false
+    },
+    {
+      id: 5,
+      title: "AI-Powered Analytics Dashboard",
+      description: "Real-time data visualization and analytics platform that leverages machine learning to provide actionable insights and predictive analytics.",
+      year: 2024,
+      image: "/photos/photo5.jpg",
+      projectUrl: "https://example.com/analytics",
+      customContent: false
+    },
+    {
+      id: 6,
+      title: "Cloud-Native Microservices",
+      description: "Scalable microservices architecture implementing event-driven design patterns and container orchestration for high availability.",
+      year: 2024,
+      image: "/photos/photo6.jpg",
+      projectUrl: "https://example.com/microservices",
       customContent: false
     }
   ];
@@ -116,7 +129,6 @@ export default function Projects() {
       title: project.title,
       description: project.description,
       year: project.year,
-      techStack: project.techStack,
       projectUrl: project.projectUrl,
       content: projectContent
     };
